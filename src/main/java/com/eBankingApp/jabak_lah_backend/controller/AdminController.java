@@ -3,6 +3,7 @@ package com.eBankingApp.jabak_lah_backend.controller;
 
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
+import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
 
 import com.eBankingApp.jabak_lah_backend.services.AdminService;
@@ -13,8 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -24,8 +25,12 @@ public class AdminController {
     private final AdminService service;
     private final ClientRepository userRepository;
 
-    @GetMapping("/List")
-    @PreAuthorize("hasAuthority('admin:read')")
+
+
+
+
+    @GetMapping("/list")
+   @PreAuthorize("hasAuthority('admin:read')")
     public List<Client> get() {
         return service.findAll();
     }
@@ -39,13 +44,10 @@ public class AdminController {
         return agent;
     }
 
-
-
-
     @PostMapping("/register")
     @PreAuthorize("hasAuthority('admin:create')")
     @Hidden
-    public ResponseEntity<String> registerAgent(
+    public ResponseEntity<RegisterAgentResponse> registerAgent(
             @RequestBody AgentRequest request
     ) {
         return ResponseEntity.ok(service.registerAgent(request));
@@ -63,7 +65,7 @@ public class AdminController {
 
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
-    public ResponseEntity<ResponseEntity<String>> updateUser(@PathVariable("id") Long id, @RequestBody AgentRequest updatedAgent)  {
+    public ResponseEntity<RegisterAgentResponse> updateUser(@PathVariable("id") Long id, @RequestBody AgentRequest updatedAgent)  {
       return ResponseEntity.ok(service.updateAgent(id,updatedAgent));
     }
 
@@ -81,10 +83,8 @@ public class AdminController {
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
-    public String deleteUser(@PathVariable("id") Long id)  {
-
-            service.delete(id);
-            return "Agent has been deleted ";
+    public RegisterAgentResponse deleteUser(@PathVariable("id") Long id)  {
+            return service.delete(id);
     }
 
 }

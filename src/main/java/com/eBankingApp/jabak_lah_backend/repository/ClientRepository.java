@@ -18,9 +18,9 @@ public interface ClientRepository extends JpaRepository<Client,Long>{
     List<Client> findAllAgentWithRoleClient();
 
 
-    @Query(value = "SELECT * FROM client WHERE client_id = ?1 AND role = 'AGENT'", nativeQuery = true)
+    @Query(value = "SELECT * FROM client WHERE id = ?1 AND role = 'AGENT'", nativeQuery = true)
     Client findAgentByClientId(Long id);
-    @Query(value = "SELECT * FROM client WHERE client_id = ?1 AND role = 'CLIENT'", nativeQuery = true)
+    @Query(value = "SELECT * FROM client WHERE id = ?1 AND role = 'CLIENT'", nativeQuery = true)
     Client findClientByClientId(Long id);
     @Query(value = "SELECT * FROM client WHERE role = 'CLIENT'", nativeQuery = true)
    List<Client> findAllClientsWithRoleClient();

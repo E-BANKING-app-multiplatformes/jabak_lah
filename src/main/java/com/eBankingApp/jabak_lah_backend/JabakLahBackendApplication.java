@@ -6,8 +6,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import static com.eBankingApp.jabak_lah_backend.entity.Role.ADMIN;
+
 
 @SpringBootApplication
 public class JabakLahBackendApplication {

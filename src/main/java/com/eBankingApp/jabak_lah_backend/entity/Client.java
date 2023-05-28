@@ -23,15 +23,19 @@ import java.util.List;
 public class Client  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clientId;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String address;
     private String CIN;
     private String phoneNumber;
+    @JsonIgnore
     private String password;
     private Date createdDate;
+
+    private String CommercialRn ;
+    private String patentNumber ;
 
     @JsonManagedReference // Add this annotation to handle the circular reference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

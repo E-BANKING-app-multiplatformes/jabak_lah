@@ -2,19 +2,16 @@ package com.eBankingApp.jabak_lah_backend.controller;
 
 import com.eBankingApp.jabak_lah_backend.auth.AuthenticationResponse;
 import com.eBankingApp.jabak_lah_backend.auth.AuthenticationService;
-import com.eBankingApp.jabak_lah_backend.model.AuthenticationRequest;
+import com.eBankingApp.jabak_lah_backend.auth.AuthenticationRequest;
 import com.eBankingApp.jabak_lah_backend.model.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-
+@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor

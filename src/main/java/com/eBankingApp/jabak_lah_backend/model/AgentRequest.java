@@ -11,8 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AgentRequest {
     private Integer id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String password;
+
+
+    private String firstName;
+    private String lastName ;
+    private String address ;
+    private String email ;
+    private String phoneNumber ;
+    private String CommercialRn ;
+    private String patentNumber ;
+
 }

@@ -7,6 +7,7 @@ import com.eBankingApp.jabak_lah_backend.entity.Client;
 
 import com.eBankingApp.jabak_lah_backend.entity.Role;
 import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
+import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
 import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.eBankingApp.jabak_lah_backend.token.TokenRepository;
@@ -16,15 +17,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular app's origin
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -44,22 +44,27 @@ public class AdminService {
                 .build();
         tokenRepository.save(token);
     }
-    public String registerAgent(AgentRequest request) {
+    public RegisterAgentResponse registerAgent(AgentRequest request) {
         if (repository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
+
         }
         var Agent = Client.builder()
-                .firstName(request.getFirstname())
-                .lastName(request.getLastname())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .address(request.getAddress())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNumber(request.getPhoneNumber())
+                .CommercialRn(request.getCommercialRn())
+                .patentNumber(request.getPatentNumber())
+                //.password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.AGENT)
                 .build();
         var savedAgent = repository.save(Agent);
         var jwtToken = jwtService.generateToken(Agent);
       //  var refreshToken = jwtService.generateRefreshToken(Agent);
         saveUserToken(savedAgent, jwtToken);
-        return "Success";
+        return RegisterAgentResponse.builder().message("success").build();
     }
 
 
@@ -75,7 +80,7 @@ public class AdminService {
     }
 
     private void revokeAllUserTokens(Client user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getClientId());
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
@@ -128,32 +133,36 @@ public class AdminService {
 
 
 
-  public ResponseEntity<String> updateAgent(Long id ,AgentRequest userUpdateRequest) {
+  public RegisterAgentResponse updateAgent(Long id , AgentRequest userUpdateRequest) {
         Client agent=
                repository.findAgentByClientId(id);
                        if(agent!=null) {
 
-                           agent.setFirstName(userUpdateRequest.getFirstname());
-                           agent.setLastName(userUpdateRequest.getLastname());
-                           agent.setEmail(userUpdateRequest.getEmail());
-                           agent.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+                     agent.setFirstName(userUpdateRequest.getFirstName());
+                     agent.setLastName(userUpdateRequest.getLastName());
+                     agent.setEmail(userUpdateRequest.getEmail());
+                     agent.setAddress(userUpdateRequest.getAddress());
+                     agent.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+                     agent.setCommercialRn(userUpdateRequest.getCommercialRn());
+                     agent.setPatentNumber(userUpdateRequest.getPatentNumber());
 
                            repository.save(agent);
                        }else {
                            System.out.println("The Agent with the Id Given not exist in the database ");
                        }
-            return ResponseEntity.ok("User updated successfully");
+
+            return RegisterAgentResponse.builder().message("Agent updated successfully").build();
         }
 
-    public void delete(Long id) {
+    public RegisterAgentResponse delete(Long id) {
         Client agent = repository.findAgentByClientId(id);
         if(agent !=null){
             repository.delete(agent);
+            return RegisterAgentResponse.builder().message("Deleted with Success").build();
         }else {
-            System.out.println("No Agent with the given Id exist in the database ");
-        }
+            return RegisterAgentResponse.builder().message("Error during Deleting").build();
 
-        }
+        }}
 
 }
 

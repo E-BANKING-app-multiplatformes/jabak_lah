@@ -4,7 +4,6 @@ package com.eBankingApp.jabak_lah_backend.auth;
 import com.eBankingApp.jabak_lah_backend.config.JwtService;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 import com.eBankingApp.jabak_lah_backend.entity.Role;
-import com.eBankingApp.jabak_lah_backend.model.AuthenticationRequest;
 import com.eBankingApp.jabak_lah_backend.model.RegisterRequest;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
 import com.eBankingApp.jabak_lah_backend.token.Token;
@@ -84,7 +83,7 @@ public class AuthenticationService {
   }
 
   private void revokeAllUserTokens(Client client) {
-    var validUserTokens = tokenRepository.findAllValidTokenByUser((long) Math.toIntExact(client.getClientId()));
+    var validUserTokens = tokenRepository.findAllValidTokenByUser((long) Math.toIntExact(client.getId()));
     if (validUserTokens.isEmpty())
       return;
     validUserTokens.forEach(token -> {
