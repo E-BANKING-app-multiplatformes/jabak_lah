@@ -9,13 +9,18 @@ import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
 import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.eBankingApp.jabak_lah_backend.token.TokenRepository;
 import com.eBankingApp.jabak_lah_backend.token.TokenType;
+import com.vonage.client.VonageClient;
+import com.vonage.client.sms.SmsSubmissionResponse;
+import com.vonage.client.sms.messages.TextMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,21 @@ public class ClientService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final String BRAND_NAME = "NXSMS";
+    @Autowired
+    private VonageClient vonageClient;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static String generatePassword() {
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(index));
+        }
+
+        return password.toString();
+    }
 
 
     public String registerAgent(ClientRequest request) {
@@ -32,20 +52,23 @@ public class ClientService {
         if (repository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
+        String generatedpassword = generatePassword();
         var Clinet = Client.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .address(request.getAddress())
                 .phoneNumber(request.getPhoneNumber())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(generatedpassword))
                 .role(Role.CLIENT)
                 .build();
         var savedAgent = repository.save(Clinet);
         var jwtToken = jwtService.generateToken(Clinet);
         //  var refreshToken = jwtService.generateRefreshToken(Agent);
+        TextMessage message = new TextMessage(BRAND_NAME, request.getPhoneNumber(), "Your password is : " + generatedpassword);
+        SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
         saveUserToken(savedAgent, jwtToken);
-        return "Success";
+        return "Success:"+generatedpassword;
     }
 
 
@@ -72,7 +95,7 @@ public class ClientService {
                          client.setAddress(clientRequest.getAddress());
                          client.setCIN(clientRequest.getCIN());
                          client.setPhoneNumber(clientRequest.getPhoneNumber());
-                         client.setPassword(passwordEncoder.encode(clientRequest.getPassword()));
+
 
                          repository.save(client);
                      }else {System.out.println("The Client with the given Id not exist in the database");}
@@ -95,7 +118,7 @@ public class ClientService {
             repository.delete(client);
             return true;
         }else {
-            System.out.println("No clinet with a id given exist in the database ");
+            System.out.println("No client with a id given exist in the database ");
             return false;
         }
     }

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
+@CrossOrigin(origins = "http://localhost:8888") // Allow requests from Angular app's origin
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor

@@ -13,7 +13,12 @@ public enum Permission {
     AGENT_READ("agent:read"),
     AGENT_UPDATE("agent:update"),
     AGENT_CREATE("agent:create"),
-    AGENT_DELETE("agent:delete")
+    AGENT_DELETE("agent:delete"),
+    CLIENT_READ("client:read"),
+    CLIENT_UPDATE("client:update"),
+    CLIENT_DELETE("client:delete"),
+    CLIENT_CREATE("client:create")
+
 
     ;
 

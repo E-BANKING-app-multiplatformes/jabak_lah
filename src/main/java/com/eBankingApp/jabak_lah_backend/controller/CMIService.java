@@ -2,9 +2,7 @@ package com.eBankingApp.jabak_lah_backend.controller;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 import com.eBankingApp.jabak_lah_backend.entity.PaymentAccount;
 import com.eBankingApp.jabak_lah_backend.entity.Transaction;
-import com.eBankingApp.jabak_lah_backend.model.TransactionRequest;
-import com.eBankingApp.jabak_lah_backend.model.TransactionResponse;
-import com.eBankingApp.jabak_lah_backend.model.TransactionStatus;
+import com.eBankingApp.jabak_lah_backend.model.*;
 import com.eBankingApp.jabak_lah_backend.repository.PaymentAccountRepository;
 import com.eBankingApp.jabak_lah_backend.repository.TransactionRepository;
 import com.vonage.client.VonageClient;
@@ -12,12 +10,16 @@ import com.vonage.client.sms.MessageStatus;
 import com.vonage.client.sms.SmsSubmissionResponse;
 import com.vonage.client.sms.messages.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
+@PreAuthorize("hasRole('CLIENT')")
 @RestController
+@CrossOrigin(origins = "http://localhost:8888") // Allow requests from Angular app's origin
 @RequestMapping("/fim/est3Dgate")
 public class CMIService {
     @Autowired
@@ -33,14 +35,15 @@ public class CMIService {
         int verificationCodeInt = min + (int) (Math.random() * (max - min + 1));
         return String.valueOf(verificationCodeInt);
     }
+    @PreAuthorize("hasAuthority('client:read')")
     @GetMapping("/sendVerificationCode/{accountId}")
-    public String sendVerificationCode(@PathVariable("accountId") long accountId) {
+    public ResponseEntity<SendVerificationCodeResponse> sendVerificationCode(@PathVariable("accountId") long accountId) {
         PaymentAccount account = paymentAccountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid account ID"));
 
         Client client = account.getClient();
         if (client == null) {
-            return "Client not found for the specified account.";
+            return new ResponseEntity<>(SendVerificationCodeResponse.builder().message("error 001").build(), HttpStatus.OK);
         }
 
         String verificationCode = generateVerificationCode();
@@ -54,11 +57,13 @@ public class CMIService {
             // Save the verification code in the PaymentAccount entity
             account.setVerificationCode(verificationCode);
             paymentAccountRepository.save(account);
-            return "Verification code: [" + verificationCode + "] sent to phone number: " + phoneNumber;
+            return new ResponseEntity<>( SendVerificationCodeResponse.builder().message("Verification code: [" + verificationCode + "] sent to phone number: " + phoneNumber).build(), HttpStatus.OK);
+
         } else {
-            return "message not sent ";
+            return new ResponseEntity<>( SendVerificationCodeResponse.builder().message("message not sent ").build(), HttpStatus.OK);
         }
     }
+    @PreAuthorize("hasAuthority('client:create')")
     @PostMapping("/{verificationCode}/makeTransaction")
     @Transactional
     public TransactionResponse executeTransaction(@PathVariable("verificationCode") String verificationCode , @RequestBody TransactionRequest transactionRequest) {
@@ -99,23 +104,24 @@ public class CMIService {
                     .build();
         }
     }
-    @GetMapping("/getAccountBalance/{accountId}")
+    @PreAuthorize("hasAuthority('client:read')")
+    @GetMapping("/getAccountBalance/{accounaqtId}")
     @Transactional(readOnly = true)
-    public double getAccountBalance(@PathVariable("accountId") long accountId) {
+    public ResponseEntity<GetAccountBalanceResponse> getAccountBalance(@PathVariable("accountId") long accountId) {
         PaymentAccount account = paymentAccountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid account ID"));
-        return account.getAccountBalance();
+        return new ResponseEntity<>(GetAccountBalanceResponse.builder().balance(account.getAccountBalance()).build(),HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('client:read')")
     @GetMapping("/getTransactionHistories/{accountId}")
     @Transactional(readOnly = true)
-    public List<Transaction> getTransactionHistories(@PathVariable("accountId") long accountId) {
+    public ResponseEntity<List<Transaction>>getTransactionHistories(@PathVariable("accountId") long accountId) {
         PaymentAccount account = paymentAccountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid account ID"));
         account.getTransactions().size();
-        return account.getTransactions();
+        return new ResponseEntity<>(account.getTransactions(),HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('client:read')")
     @GetMapping("/getFailedTransactions/{accountId}")
     @Transactional(readOnly = true)
     public List<Transaction> getFailedTransactions(@PathVariable("accountId") long accountId) {
@@ -126,5 +132,15 @@ public class CMIService {
                 .filter(transaction -> transaction.getTransactionStatus() == TransactionStatus.FAILED)
                 .collect(Collectors.toList());
     }
-
+    @PreAuthorize("hasAuthority('client:read')")
+    @GetMapping("/getSucceedTransactions/{accountId}")
+    @Transactional(readOnly = true)
+    public List<Transaction> getSucceedTransactions(@PathVariable("accountId") long accountId) {
+        PaymentAccount account = paymentAccountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid account ID"));
+        account.getTransactions().size();
+        return account.getTransactions().stream()
+                .filter(transaction -> transaction.getTransactionStatus() == TransactionStatus.SUCCEEDED)
+                .collect(Collectors.toList());
+    }
 }

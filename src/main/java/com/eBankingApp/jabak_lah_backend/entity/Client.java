@@ -37,11 +37,11 @@ public class Client  implements UserDetails {
     private String CommercialRn ;
     private String patentNumber ;
 
-    @JsonManagedReference // Add this annotation to handle the circular reference
+
+    @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paymentAccountId", referencedColumnName = "paymentAccountId")
     private PaymentAccount paymentAccount;
-
 
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -1,5 +1,6 @@
 package com.eBankingApp.jabak_lah_backend.model;
 
+import com.eBankingApp.jabak_lah_backend.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,5 +14,6 @@ public class ClientRequest {
     private String address;
     private String CIN;
     private String phoneNumber;
-    private String password;
+    private Role role;
+
 }

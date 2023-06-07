@@ -13,9 +13,13 @@ import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.eBankingApp.jabak_lah_backend.token.TokenRepository;
 import com.eBankingApp.jabak_lah_backend.token.TokenType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vonage.client.VonageClient;
+import com.vonage.client.sms.SmsSubmissionResponse;
+import com.vonage.client.sms.messages.TextMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 @CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular app's origin
 @Service
@@ -32,6 +37,21 @@ public class AdminService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final String BRAND_NAME = "NXSMS";
+    @Autowired
+    private VonageClient vonageClient;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static String generatePassword() {
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(index));
+        }
+
+        return password.toString();
+    }
 
 
     private void saveAgentToken(Client user, String jwtToken) {
@@ -49,6 +69,7 @@ public class AdminService {
             throw new RuntimeException("Email already exists");
 
         }
+        String generatedPassword =generatePassword();
         var Agent = Client.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -57,14 +78,16 @@ public class AdminService {
                 .phoneNumber(request.getPhoneNumber())
                 .CommercialRn(request.getCommercialRn())
                 .patentNumber(request.getPatentNumber())
-                //.password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(generatedPassword))
                 .role(Role.AGENT)
                 .build();
         var savedAgent = repository.save(Agent);
         var jwtToken = jwtService.generateToken(Agent);
       //  var refreshToken = jwtService.generateRefreshToken(Agent);
         saveUserToken(savedAgent, jwtToken);
-        return RegisterAgentResponse.builder().message("success").build();
+        TextMessage message = new TextMessage(BRAND_NAME, request.getPhoneNumber(), "Your password is : " + generatedPassword);
+        SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
+        return RegisterAgentResponse.builder().message("success"+generatedPassword).build();
     }
 
 

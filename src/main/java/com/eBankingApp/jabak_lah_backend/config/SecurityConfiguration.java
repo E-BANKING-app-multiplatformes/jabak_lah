@@ -15,8 +15,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 
 import static com.eBankingApp.jabak_lah_backend.entity.Permission.*;
-import static com.eBankingApp.jabak_lah_backend.entity.Role.ADMIN;
-import static com.eBankingApp.jabak_lah_backend.entity.Role.AGENT;
+import static com.eBankingApp.jabak_lah_backend.entity.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -46,8 +45,9 @@ public class SecurityConfiguration {
                 "/configuration/security",
                 "/swagger-ui/**",
                 "/webjars/**",
-                "/swagger-ui.html",
-                "/fim/est3Dgate/**"
+                "/swagger-ui.html"
+
+
         )
           .permitAll()
 
@@ -67,6 +67,13 @@ public class SecurityConfiguration {
         .requestMatchers(POST, "/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
         .requestMatchers(PUT, "/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
         .requestMatchers(DELETE, "/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
+            .requestMatchers("/fim/est3Dgate/**").hasRole(CLIENT.name())
+            .requestMatchers(GET, "/fim/est3Dgate/**").hasAuthority(CLIENT_READ.name())
+            .requestMatchers(POST, "/fim/est3Dgate/**").hasAuthority(CLIENT_CREATE.name())
+            .requestMatchers(PUT, "/fim/est3Dgate/**").hasAuthority(CLIENT_UPDATE.name())
+            .requestMatchers(DELETE, "/fim/est3Dgate/**").hasAuthority(CLIENT_DELETE.name())
+            .requestMatchers("/client/**").hasRole(CLIENT.name())
+             .requestMatchers(GET, "/client/**").hasAuthority(CLIENT_READ.name())
 
 
         .anyRequest()

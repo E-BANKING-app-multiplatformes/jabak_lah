@@ -28,7 +28,6 @@ public class AdminController {
 
 
 
-
     @GetMapping("/list")
    @PreAuthorize("hasAuthority('admin:read')")
     public List<Client> get() {

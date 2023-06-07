@@ -1,5 +1,8 @@
 package com.eBankingApp.jabak_lah_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +18,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "paymentAccountId")
 public class PaymentAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long paymentAccountId;
-
+    @JsonManagedReference
     @OneToOne(mappedBy = "paymentAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Client client;
 
@@ -29,6 +33,7 @@ public class PaymentAccount {
     private Date createdDate;
 
     private String bankName;
+
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "paymentAccountId")

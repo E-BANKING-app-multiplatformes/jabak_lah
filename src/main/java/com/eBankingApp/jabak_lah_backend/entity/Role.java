@@ -15,7 +15,13 @@ import static com.eBankingApp.jabak_lah_backend.entity.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
 
-  CLIENT(Collections.emptySet()),
+  CLIENT( Set.of(
+          CLIENT_READ,
+          CLIENT_UPDATE,
+          CLIENT_DELETE,
+          CLIENT_CREATE
+
+  )),
   ADMIN(
           Set.of(
                   ADMIN_READ,
