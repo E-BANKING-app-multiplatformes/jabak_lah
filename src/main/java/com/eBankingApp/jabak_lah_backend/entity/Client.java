@@ -36,6 +36,8 @@ public class Client  implements UserDetails {
 
     private String CommercialRn ;
     private String patentNumber ;
+    private Boolean isPaymentAccountActivated ;
+    private Boolean isPasswordChanged ;
 
 
     @JsonManagedReference
