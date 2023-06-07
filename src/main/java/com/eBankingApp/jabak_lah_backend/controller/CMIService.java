@@ -6,6 +6,7 @@ import com.eBankingApp.jabak_lah_backend.model.*;
 import com.eBankingApp.jabak_lah_backend.repository.PaymentAccountRepository;
 import com.eBankingApp.jabak_lah_backend.repository.TransactionRepository;
 import com.eBankingApp.jabak_lah_backend.services.CreditorService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vonage.client.VonageClient;
 import com.vonage.client.sms.MessageStatus;
 import com.vonage.client.sms.SmsSubmissionResponse;
@@ -91,7 +92,9 @@ public class CMIService {
 
         boolean isRechargeType = transaction.getCreditorType() == CreditorType.RECHARGE;
         boolean checkPhone = creditorService.checkPhoneNumber(transactionRequest.getPhoneNumber(), transaction.getCreditor());
+        boolean sendMessage=true ;
         if (isRechargeType && !checkPhone) {
+            sendMessage=false;
             return TransactionResponse.builder()
                     .message("Invalid phone number for :"+transaction.getCreditor()+". Transaction not allowed.")
                     .build();
@@ -100,13 +103,17 @@ if (account.getAccountBalance() >= transactionRequest.getAmount()) {
             double updateBalance = account.getAccountBalance() - transactionRequest.getAmount();
             account.setAccountBalance(updateBalance);
             transaction.setTransactionStatus(TransactionStatus.SUCCEEDED);
-
             transactionRepository.save(transaction);
             List<Transaction> transactions = account.getTransactions();
             transactions.add(transaction);
             account.setTransactions(transactions);
             paymentAccountRepository.save(account);
-            return TransactionResponse.builder()
+            if(sendMessage&&isRechargeType){
+
+            String phoneNumber = transaction.getPhoneNumber();
+             TextMessage message = new TextMessage(BRAND_NAME, phoneNumber, "You have activated the offer : " + transaction.getDescription()+"amount:"+transaction.getAmount());}
+
+    return TransactionResponse.builder()
                     .message("Transaction executed successfully")
                     .build();
         } else {
