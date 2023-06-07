@@ -1,5 +1,6 @@
 package com.eBankingApp.jabak_lah_backend.entity;
 
+import com.eBankingApp.jabak_lah_backend.model.CreditorType;
 import com.eBankingApp.jabak_lah_backend.model.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,6 +28,11 @@ public class Transaction {
     @Temporal(TemporalType.DATE)
     private Date date;
     private TransactionStatus transactionStatus;
+    private String description ;
+    private CreditorType creditorType;
+    private String phoneNumber ;
+
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paymentAccountId")

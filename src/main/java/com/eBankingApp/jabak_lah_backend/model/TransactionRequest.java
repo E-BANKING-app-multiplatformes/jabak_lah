@@ -15,7 +15,9 @@ public class TransactionRequest {
     private String creditor ;
     private Date date ;
     private long accountId  ;
+    private String description ;
     private String phoneNumber ;
+    private CreditorType creditorType;
 
 
 

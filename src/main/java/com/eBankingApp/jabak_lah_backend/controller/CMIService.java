@@ -5,6 +5,7 @@ import com.eBankingApp.jabak_lah_backend.entity.Transaction;
 import com.eBankingApp.jabak_lah_backend.model.*;
 import com.eBankingApp.jabak_lah_backend.repository.PaymentAccountRepository;
 import com.eBankingApp.jabak_lah_backend.repository.TransactionRepository;
+import com.eBankingApp.jabak_lah_backend.services.CreditorService;
 import com.vonage.client.VonageClient;
 import com.vonage.client.sms.MessageStatus;
 import com.vonage.client.sms.SmsSubmissionResponse;
@@ -28,6 +29,8 @@ public class CMIService {
     private TransactionRepository transactionRepository;
     @Autowired
     private VonageClient vonageClient;
+    @Autowired
+    private CreditorService creditorService;
     private final String BRAND_NAME = "Vonage APIs";
     private String generateVerificationCode() {
         int min = 1000;
@@ -81,14 +84,24 @@ public class CMIService {
                 .creditor(transactionRequest.getCreditor())
                 .date(transactionRequest.getDate())
                 .transactionStatus(TransactionStatus.PENDING)
+                .creditorType(transactionRequest.getCreditorType())
+                .description(transactionRequest.getDescription())
+                .phoneNumber(transactionRequest.getPhoneNumber())
                 .build();
 
-        if (account.getAccountBalance() >= transactionRequest.getAmount()) {
+        boolean isRechargeType = transaction.getCreditorType() == CreditorType.RECHARGE;
+        boolean checkPhone = creditorService.checkPhoneNumber(transactionRequest.getPhoneNumber(), transaction.getCreditor());
+        if (isRechargeType && !checkPhone) {
+            return TransactionResponse.builder()
+                    .message("Invalid phone number for :"+transaction.getCreditor()+". Transaction not allowed.")
+                    .build();
+        }
+if (account.getAccountBalance() >= transactionRequest.getAmount()) {
             double updateBalance = account.getAccountBalance() - transactionRequest.getAmount();
             account.setAccountBalance(updateBalance);
             transaction.setTransactionStatus(TransactionStatus.SUCCEEDED);
-            transactionRepository.save(transaction);
 
+            transactionRepository.save(transaction);
             List<Transaction> transactions = account.getTransactions();
             transactions.add(transaction);
             account.setTransactions(transactions);
@@ -105,7 +118,7 @@ public class CMIService {
         }
     }
     @PreAuthorize("hasAuthority('client:read')")
-    @GetMapping("/getAccountBalance/{accounaqtId}")
+    @GetMapping("/getAccountBalance/{accountId}")
     @Transactional(readOnly = true)
     public ResponseEntity<GetAccountBalanceResponse> getAccountBalance(@PathVariable("accountId") long accountId) {
         PaymentAccount account = paymentAccountRepository.findById(accountId)
