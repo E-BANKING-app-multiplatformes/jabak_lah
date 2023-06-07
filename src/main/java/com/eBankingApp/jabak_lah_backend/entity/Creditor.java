@@ -29,12 +29,12 @@ public class Creditor {
     private List<String> phoneNumbers;
    private CreditorType creditorType;
 
-    @PostLoad
+   /* @PostLoad
     public void postLoad() {
         if (phoneNumbers == null || phoneNumbers.isEmpty()) {
             phoneNumbers = new ArrayList<>();
             phoneNumbers.add("+212617093514");
             phoneNumbers.add("+212616671210");
         }
-    }
+    }*/
 }
