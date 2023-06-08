@@ -1,5 +1,6 @@
 package com.eBankingApp.jabak_lah_backend.entity;
 
+import com.eBankingApp.jabak_lah_backend.images.FileDB;
 import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -38,8 +39,12 @@ public class Client  implements UserDetails {
     private String patentNumber ;
     private Boolean isPaymentAccountActivated ;
     private Boolean isPasswordChanged ;
+    private String verificationCode;
+   private String VerificationCodeCreatedAt;
 
-
+//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "photo_id", referencedColumnName = "id")
+//    private FileDB photo;
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paymentAccountId", referencedColumnName = "paymentAccountId")

@@ -45,20 +45,22 @@ public class SecurityConfiguration {
                 "/configuration/security",
                 "/swagger-ui/**",
                 "/webjars/**",
-                "/swagger-ui.html"
+                "/swagger-ui.html",
+                "/file/**"
+
 
 
         )
           .permitAll()
 
 
-        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), AGENT.name())
+        .requestMatchers("/api/v1/client/**").hasAnyRole(ADMIN.name(), AGENT.name())
 
 
-        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), AGENT_READ.name())
-        .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), AGENT_CREATE.name())
-        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), AGENT_UPDATE.name())
-        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), AGENT_DELETE.name())
+        .requestMatchers(GET, "/api/v1/client/**").hasAnyAuthority(ADMIN_READ.name(), AGENT_READ.name())
+        .requestMatchers(POST, "/api/v1/client/**").hasAnyAuthority(ADMIN_CREATE.name(), AGENT_CREATE.name())
+        .requestMatchers(PUT, "/api/v1/client/**").hasAnyAuthority(ADMIN_UPDATE.name(), AGENT_UPDATE.name())
+        .requestMatchers(DELETE, "/api/v1/client/**").hasAnyAuthority(ADMIN_DELETE.name(), AGENT_DELETE.name())
 
 
         .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())

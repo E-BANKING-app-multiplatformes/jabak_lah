@@ -1,24 +1,23 @@
 package com.eBankingApp.jabak_lah_backend.controller;
 
 import com.eBankingApp.jabak_lah_backend.entity.Client;
-import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
 import com.eBankingApp.jabak_lah_backend.model.ClientRequest;
+import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.services.ClientService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/v1/management")
-//@Tag(name = "Management")
+@RequestMapping("/api/v1/client")
+
 @RequiredArgsConstructor
 public class AgentController {
 
@@ -43,7 +42,7 @@ private  final ClientService service;
 
 
 
-    @GetMapping("/List")
+    @GetMapping("/list")
     @PreAuthorize("hasAuthority('agent:read')")
     public List<Client> getAllClient() {
         return service.findAll();
@@ -62,29 +61,21 @@ private  final ClientService service;
     @PostMapping("/register")
     @PreAuthorize("hasAuthority('agent:create')")
     @Hidden
-    public ResponseEntity<String> registerClient(
+    public ResponseEntity<RegisterAgentResponse> registerClient(
             @RequestBody ClientRequest request
     ) {
-        return ResponseEntity.ok(service.registerAgent(request));
+        return ResponseEntity.ok(service.registerClient(request));
     }
 
 
 
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('agent:update')")
-    public ResponseEntity<ResponseEntity<String>> updateClient(@PathVariable("id") Long id, @RequestBody ClientRequest updatedAgent)  {
+    public ResponseEntity<RegisterAgentResponse> updateClient(@PathVariable("id") Long id, @RequestBody ClientRequest updatedAgent)  {
         return ResponseEntity.ok(service.updateClient(id,updatedAgent));
     }
 
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('agent:delete')")
-    public String deleteClient(@PathVariable("id") Long id) {
-
-        if (service.deleteClient(id) == true) {
-            return "Client has been deleted ";
-        } else {
-            return "No Client with the id :{} given exist in the database : make sure from the Id "  +id;
-        }
-    }
-}
+    public RegisterAgentResponse deleteClient(@PathVariable("id") Long id) { return service.deleteClient(id);}}

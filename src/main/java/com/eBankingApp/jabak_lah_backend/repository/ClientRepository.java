@@ -25,4 +25,7 @@ public interface ClientRepository extends JpaRepository<Client,Long>{
     @Query(value = "SELECT * FROM client WHERE role = 'CLIENT'", nativeQuery = true)
    List<Client> findAllClientsWithRoleClient();
 
+    Client findByPhoneNumber(String phoneNumber);
+
+    Client findById(String userId);
 }
