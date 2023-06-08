@@ -14,14 +14,20 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-@PreAuthorize("hasRole('CLIENT')")
+@PreAuthorize("hasAuthority('CLIENT')")
+
 @RestController
-@CrossOrigin(origins = "http://localhost:8888") // Allow requests from Angular app's origin
+@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
 @RequestMapping("/fim/est3Dgate")
 public class CMIService {
+
+    @Autowired
+    BankAccountRepository bankAccountRepository;
     @Autowired
     private PaymentAccountRepository paymentAccountRepository;
     @Autowired
@@ -36,6 +42,8 @@ public class CMIService {
     OrderItemRepository orderItemRepository;
     @Autowired
     DeliveryRepository deliveryRepository;
+@Autowired
+ClientRepository clientRepository;
 
 
     private final String BRAND_NAME = "Vonage APIs";
@@ -82,7 +90,7 @@ public class CMIService {
         // Check the verification code
         if (!verificationCode.equals(account.getVerificationCode())) {
             return TransactionResponse.builder()
-                    .message("Invalid verification code. Transaction not allowed.")
+                    .message("Invalid verification code.Transaction not allowed.")
                     .build();
         }
         Transaction transaction = Transaction.builder()
@@ -230,4 +238,6 @@ if (account.getAccountBalance() >= transactionRequest.getAmount()) {
                 .filter(transaction -> transaction.getTransactionStatus() == TransactionStatus.SUCCEEDED)
                 .collect(Collectors.toList());
     }
+
+
 }

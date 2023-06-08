@@ -36,16 +36,6 @@ public class SecurityConfiguration {
         .authorizeHttpRequests()
         .requestMatchers(
                 "/api/v1/auth/**",
-                "/v2/api-docs",
-                "/v3/api-docs",
-                "/v3/api-docs/**",
-                "/swagger-resources",
-                "/swagger-resources/**",
-                "/configuration/ui",
-                "/configuration/security",
-                "/swagger-ui/**",
-                "/webjars/**",
-                "/swagger-ui.html",
                 "/file/**"
 
 
@@ -65,17 +55,33 @@ public class SecurityConfiguration {
 
         .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
 
+            .requestMatchers(POST, "/fim/est3Dgate/**").hasAuthority(AGENT_CREATE.name())
         .requestMatchers(GET, "/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
         .requestMatchers(POST, "/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
         .requestMatchers(PUT, "/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
         .requestMatchers(DELETE, "/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
+            .requestMatchers("/fim/est3DgateV2/**").hasRole(AGENT.name())
+            .requestMatchers(POST, "/fim/est3DgateV2/**").hasAuthority(AGENT_CREATE.name())
+
+
+
+
+
+
             .requestMatchers("/fim/est3Dgate/**").hasRole(CLIENT.name())
-            .requestMatchers(GET, "/fim/est3Dgate/**").hasAuthority(CLIENT_READ.name())
             .requestMatchers(POST, "/fim/est3Dgate/**").hasAuthority(CLIENT_CREATE.name())
+
+            .requestMatchers(GET, "/fim/est3Dgate/**").hasAuthority(CLIENT_READ.name())
             .requestMatchers(PUT, "/fim/est3Dgate/**").hasAuthority(CLIENT_UPDATE.name())
             .requestMatchers(DELETE, "/fim/est3Dgate/**").hasAuthority(CLIENT_DELETE.name())
             .requestMatchers("/client/**").hasRole(CLIENT.name())
-             .requestMatchers(GET, "/client/**").hasAuthority(CLIENT_READ.name())
+            .requestMatchers(GET, "/client/**").hasAuthority(CLIENT_READ.name())
+
+
+
+
+
+
 
 
         .anyRequest()

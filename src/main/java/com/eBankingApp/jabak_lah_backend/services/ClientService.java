@@ -60,6 +60,7 @@ public class ClientService {
                 .password(passwordEncoder.encode(generatedpassword))
                 .CIN(request.getCIN())
                 .role(Role.CLIENT)
+                .isPaymentAccountActivated(false)
                 .build();
         var savedAgent = repository.save(Clinet);
         var jwtToken = jwtService.generateToken(Clinet);

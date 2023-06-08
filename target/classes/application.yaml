@@ -1,6 +1,6 @@
 server:
   port: 8084
-  address:  192.168.0.108
+  address: 192.168.0.108
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/jabak_lah?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false

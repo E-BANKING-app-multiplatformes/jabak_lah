@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,13 @@ public class Client  implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paymentAccountId", referencedColumnName = "paymentAccountId")
     private PaymentAccount paymentAccount;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<BankAccount> bankAccounts = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 
     @Enumerated(EnumType.STRING)
     private Role role;

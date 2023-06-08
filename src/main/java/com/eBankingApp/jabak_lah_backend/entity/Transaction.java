@@ -3,6 +3,7 @@ package com.eBankingApp.jabak_lah_backend.entity;
 import com.eBankingApp.jabak_lah_backend.model.CreditorType;
 import com.eBankingApp.jabak_lah_backend.model.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -35,10 +36,13 @@ public class Transaction {
     private String phoneNumber;
     @OneToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore // Add this annotation to break the potential circular reference
+
     private CustomerOrder order;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paymentAccountId")
     @JsonIgnoreProperties("transactions")
+    @JsonIgnore
     private PaymentAccount paymentAccount;
 
 }
