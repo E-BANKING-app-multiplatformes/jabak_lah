@@ -1,12 +1,8 @@
 package com.eBankingApp.jabak_lah_backend.controller;
-import com.eBankingApp.jabak_lah_backend.entity.Client;
-import com.eBankingApp.jabak_lah_backend.entity.PaymentAccount;
-import com.eBankingApp.jabak_lah_backend.entity.Transaction;
+import com.eBankingApp.jabak_lah_backend.entity.*;
 import com.eBankingApp.jabak_lah_backend.model.*;
-import com.eBankingApp.jabak_lah_backend.repository.PaymentAccountRepository;
-import com.eBankingApp.jabak_lah_backend.repository.TransactionRepository;
+import com.eBankingApp.jabak_lah_backend.repository.*;
 import com.eBankingApp.jabak_lah_backend.services.CreditorService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vonage.client.VonageClient;
 import com.vonage.client.sms.MessageStatus;
 import com.vonage.client.sms.SmsSubmissionResponse;
@@ -17,13 +13,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+
+
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-@PreAuthorize("hasRole('CLIENT')")
+@PreAuthorize("hasAuthority('CLIENT')")
+
 @RestController
-@CrossOrigin(origins = "http://localhost:8888") // Allow requests from Angular app's origin
+@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
 @RequestMapping("/fim/est3Dgate")
 public class CMIService {
+
+    @Autowired
+    BankAccountRepository bankAccountRepository;
     @Autowired
     private PaymentAccountRepository paymentAccountRepository;
     @Autowired
@@ -32,6 +36,16 @@ public class CMIService {
     private VonageClient vonageClient;
     @Autowired
     private CreditorService creditorService;
+    @Autowired
+    CustomerOrderRepository customerOrderRepository;
+    @Autowired
+    OrderItemRepository orderItemRepository;
+    @Autowired
+    DeliveryRepository deliveryRepository;
+@Autowired
+ClientRepository clientRepository;
+
+
     private final String BRAND_NAME = "Vonage APIs";
     private String generateVerificationCode() {
         int min = 1000;
@@ -76,7 +90,7 @@ public class CMIService {
         // Check the verification code
         if (!verificationCode.equals(account.getVerificationCode())) {
             return TransactionResponse.builder()
-                    .message("Invalid verification code. Transaction not allowed.")
+                    .message("Invalid verification code.Transaction not allowed.")
                     .build();
         }
         Transaction transaction = Transaction.builder()
@@ -89,6 +103,67 @@ public class CMIService {
                 .description(transactionRequest.getDescription())
                 .phoneNumber(transactionRequest.getPhoneNumber())
                 .build();
+        if (transaction.getCreditorType() == CreditorType.STORE) {
+            // Build the Delivery
+            Delivery delivery = null;
+            if (transactionRequest.getAddress() != null) {
+                delivery = Delivery.builder()
+                        .address(transactionRequest.getAddress())
+                        .deliveryDate(new Date()) // Set the delivery date as the current date
+                        .deliverPrice(70.00) // Set the initial delivery price to 0.0
+                        .status(DeliveryStatus.PENDING) // Set the delivery status as PENDING
+                        .build();
+
+                // Save the Delivery in the database
+                deliveryRepository.save(delivery);
+            }
+
+            // Build the CustomerOrder
+            CustomerOrder customerOrder = CustomerOrder.builder()
+                    .delivery(delivery) // Associate the Delivery with the CustomerOrder
+                    .totalAmount(0.0) // Set the initial total amount to 0.0
+                    .build();
+
+            // Save the CustomerOrder in the database
+            customerOrderRepository.save(customerOrder);
+
+            // Convert OrderItemRequest list to OrderItem list and save all OrderItems
+            List<OrderItem> orderItems = transactionRequest.getItems().stream()
+                    .map(orderItemRequest -> {
+                        OrderItem orderItem = OrderItem.builder()
+                                .itemName(orderItemRequest.getItemName())
+                                .quantity(orderItemRequest.getQuantity())
+                                .price(orderItemRequest.getPrice())
+                                .category(orderItemRequest.getCategory())
+                                .productNumber(orderItemRequest.getProductNumber())
+                                .order(customerOrder) // Set the CustomerOrder for each OrderItem
+                                .build();
+
+                        // Save the OrderItem in the database
+                        orderItemRepository.save(orderItem);
+
+                        return orderItem;
+                    })
+                    .collect(Collectors.toList());
+
+            // Set the list of OrderItems for the CustomerOrder
+            customerOrder.setItems(orderItems);
+            customerOrder.setDelivery(delivery);
+
+
+            // Calculate the total amount
+            double totalAmount = customerOrder.calculateTotalAmount();
+            customerOrder.setTotalAmount(totalAmount);
+
+            // Save the updated CustomerOrder in the database
+            customerOrderRepository.save(customerOrder);
+
+            // Associate the CustomerOrder with the Transaction
+            transaction.setAmount(totalAmount);
+            transaction.setOrder(customerOrder);
+
+        }
+
 
         boolean isRechargeType = transaction.getCreditorType() == CreditorType.RECHARGE;
         boolean checkPhone = creditorService.checkPhoneNumber(transactionRequest.getPhoneNumber(), transaction.getCreditor());
@@ -100,7 +175,7 @@ public class CMIService {
                     .build();
         }
 if (account.getAccountBalance() >= transactionRequest.getAmount()) {
-            double updateBalance = account.getAccountBalance() - transactionRequest.getAmount();
+            double updateBalance = account.getAccountBalance() - transaction.getAmount();
             account.setAccountBalance(updateBalance);
             transaction.setTransactionStatus(TransactionStatus.SUCCEEDED);
             transactionRepository.save(transaction);
@@ -163,4 +238,6 @@ if (account.getAccountBalance() >= transactionRequest.getAmount()) {
                 .filter(transaction -> transaction.getTransactionStatus() == TransactionStatus.SUCCEEDED)
                 .collect(Collectors.toList());
     }
+
+
 }

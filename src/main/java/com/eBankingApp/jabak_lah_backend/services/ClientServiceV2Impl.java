@@ -42,7 +42,7 @@ public class ClientServiceV2Impl implements  ClientServiceV2{
         if (!(client == null) ) {
 
              client.setPassword(passwordEncoder.encode(request.getNewPassword()));
-             client.setIsFirstLogin(false);
+            client.setIsFirstLogin(false);
                 clientRepository.save(client);
                 return RegisterAgentResponse.builder().message("Password updated successfully").build();
             } else {

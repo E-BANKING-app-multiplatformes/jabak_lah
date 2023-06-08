@@ -62,6 +62,10 @@ public class JwtService {
     extraClaims.put("role", user.getRole());
     extraClaims.put("id" ,user.getId());
    extraClaims.put("isFirstLogin" ,user.getIsFirstLogin());
+//    extraClaims.put("phoneNumber",user.getPhoneNumber());
+//    extraClaims.put("isFirstLogin",user.getIsFirstLogin());
+//    extraClaims.put("isPaymentAccountActivated",user.getIsPaymentAccountActivated());
+
 
 
     return Jwts

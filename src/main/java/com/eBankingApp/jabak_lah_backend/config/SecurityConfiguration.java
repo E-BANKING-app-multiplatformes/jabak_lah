@@ -36,22 +36,14 @@ public class SecurityConfiguration {
         .authorizeHttpRequests()
         .requestMatchers(
                 "/api/v1/auth/**",
-                "/v2/api-docs",
-                "/v3/api-docs",
-                "/v3/api-docs/**",
-                "/swagger-resources",
-                "/swagger-resources/**",
-                "/configuration/ui",
-                "/configuration/security",
-                "/swagger-ui/**",
-                "/webjars/**",
-                "/swagger-ui.html",
                 "/file/**"
 
 
 
         )
           .permitAll()
+            .requestMatchers("/client/**").hasRole(CLIENT.name())
+            .requestMatchers(GET, "/client/**").hasAuthority(CLIENT_READ.name())
 
 
         .requestMatchers("/api/v1/client/**").hasAnyRole(ADMIN.name(), AGENT.name())
@@ -61,21 +53,25 @@ public class SecurityConfiguration {
         .requestMatchers(POST, "/api/v1/client/**").hasAnyAuthority(ADMIN_CREATE.name(), AGENT_CREATE.name())
         .requestMatchers(PUT, "/api/v1/client/**").hasAnyAuthority(ADMIN_UPDATE.name(), AGENT_UPDATE.name())
         .requestMatchers(DELETE, "/api/v1/client/**").hasAnyAuthority(ADMIN_DELETE.name(), AGENT_DELETE.name())
-
-
         .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
-
         .requestMatchers(GET, "/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
         .requestMatchers(POST, "/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
         .requestMatchers(PUT, "/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
         .requestMatchers(DELETE, "/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
+
             .requestMatchers("/fim/est3Dgate/**").hasRole(CLIENT.name())
-            .requestMatchers(GET, "/fim/est3Dgate/**").hasAuthority(CLIENT_READ.name())
             .requestMatchers(POST, "/fim/est3Dgate/**").hasAuthority(CLIENT_CREATE.name())
+            .requestMatchers(GET, "/fim/est3Dgate/**").hasAuthority(CLIENT_READ.name())
             .requestMatchers(PUT, "/fim/est3Dgate/**").hasAuthority(CLIENT_UPDATE.name())
             .requestMatchers(DELETE, "/fim/est3Dgate/**").hasAuthority(CLIENT_DELETE.name())
-            .requestMatchers("/client/**").hasRole(CLIENT.name())
-             .requestMatchers(GET, "/client/**").hasAuthority(CLIENT_READ.name())
+            .requestMatchers("/fim/est3DgateV2/**").hasRole(AGENT.name())
+            .requestMatchers(POST, "/fim/est3DgateV2/**").hasAuthority(AGENT_CREATE.name())
+
+
+
+
+
+
 
 
         .anyRequest()

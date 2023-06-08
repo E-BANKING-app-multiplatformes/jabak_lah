@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +20,9 @@ public class TransactionRequest {
     private String description ;
     private String phoneNumber ;
     private CreditorType creditorType;
+    private List<OrderItemRequest> items;
+    private String address ;
+
 
 
 
