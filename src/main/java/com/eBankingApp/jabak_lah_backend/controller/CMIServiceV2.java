@@ -57,6 +57,7 @@ public class CMIServiceV2 {
                     .accountBalance(request.getPaymentLimit())
                     .bankName("CIH")
                     .createdDate(currentDate)
+
                     .build();
             paymentAccountRepository.save(paymentAccount);
             long paymentAccountId =paymentAccount.getPaymentAccountId();
