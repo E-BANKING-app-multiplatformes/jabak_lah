@@ -167,7 +167,7 @@ public class CMIService {
                     .build();
         }
 if (account.getAccountBalance() >= transactionRequest.getAmount()) {
-            double updateBalance = account.getAccountBalance() - transactionRequest.getAmount();
+            double updateBalance = account.getAccountBalance() - transaction.getAmount();
             account.setAccountBalance(updateBalance);
             transaction.setTransactionStatus(TransactionStatus.SUCCEEDED);
             transactionRepository.save(transaction);

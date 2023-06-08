@@ -25,27 +25,20 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
     private Long transactionId;
-
     private double amount;
     private String creditor;
-
     @Temporal(TemporalType.DATE)
     private Date date;
-
     private TransactionStatus transactionStatus;
     private String description;
-
     private CreditorType creditorType;
     private String phoneNumber;
-
     @OneToOne
     @JoinColumn(name = "order_id")
     private CustomerOrder order;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paymentAccountId")
     @JsonIgnoreProperties("transactions")
     private PaymentAccount paymentAccount;
 
-    // Other fields and relationships as needed
 }
