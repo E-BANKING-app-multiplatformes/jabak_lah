@@ -50,11 +50,11 @@ public class CMIServiceV2 {
 
         double accountBalance = bankAccount.getBalance();
 
-        if (accountBalance >= request.getBalance()) {
+        if (accountBalance >= request.getPaymentLimit()) {
             LocalDate currentDate = LocalDate.now();
 
             PaymentAccount paymentAccount=PaymentAccount.builder()
-                    .accountBalance(request.getBalance())
+                    .accountBalance(request.getPaymentLimit())
                     .bankName("CIH")
                     .createdDate(currentDate)
                     .build();
