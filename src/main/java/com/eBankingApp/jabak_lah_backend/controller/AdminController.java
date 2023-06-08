@@ -25,9 +25,6 @@ public class AdminController {
     private final AdminService service;
     private final ClientRepository userRepository;
 
-
-
-
     @GetMapping("/list")
    @PreAuthorize("hasAuthority('admin:read')")
     public List<Client> get() {
@@ -37,9 +34,7 @@ public class AdminController {
     @GetMapping("/agent/{id}")
     @PreAuthorize("hasAuthority('admin:read')")
     public Client getById(@PathVariable("id") Long id) {
-        // Logic to find user by ID
         Client agent = service.findById(id);
-        // Return the found user or handle the case where user is not found
         return agent;
     }
 
@@ -54,12 +49,6 @@ public class AdminController {
 
 
 
-//    @PutMapping("/up")
-//    @PreAuthorize("hasAuthority('admin:update')")
-//    @Hidden
-//    public String put() {
-//        return "PUT:: admin controller";
-//    }
 
 
     @PutMapping("/update/{id}")

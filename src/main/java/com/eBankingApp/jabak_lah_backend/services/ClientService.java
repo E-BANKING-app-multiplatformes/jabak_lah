@@ -3,8 +3,8 @@ package com.eBankingApp.jabak_lah_backend.services;
 import com.eBankingApp.jabak_lah_backend.config.JwtService;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 import com.eBankingApp.jabak_lah_backend.entity.Role;
-import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
 import com.eBankingApp.jabak_lah_backend.model.ClientRequest;
+import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
 import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.eBankingApp.jabak_lah_backend.token.TokenRepository;
@@ -14,12 +14,10 @@ import com.vonage.client.sms.SmsSubmissionResponse;
 import com.vonage.client.sms.messages.TextMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -47,7 +45,7 @@ public class ClientService {
     }
 
 
-    public String registerAgent(ClientRequest request) {
+    public RegisterAgentResponse registerClient(ClientRequest request) {
 
         if (repository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -60,6 +58,7 @@ public class ClientService {
                 .address(request.getAddress())
                 .phoneNumber(request.getPhoneNumber())
                 .password(passwordEncoder.encode(generatedpassword))
+                .CIN(request.getCIN())
                 .role(Role.CLIENT)
                 .build();
         var savedAgent = repository.save(Clinet);
@@ -68,7 +67,7 @@ public class ClientService {
         TextMessage message = new TextMessage(BRAND_NAME, request.getPhoneNumber(), "Your password is : " + generatedpassword);
         SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
         saveUserToken(savedAgent, jwtToken);
-        return "Success:"+generatedpassword;
+        return RegisterAgentResponse.builder().message("success"+generatedpassword).build();
     }
 
 
@@ -85,7 +84,7 @@ public class ClientService {
     }
 
 
-    public ResponseEntity<String> updateClient(Long id , ClientRequest clientRequest) {
+    public RegisterAgentResponse updateClient(Long id , ClientRequest clientRequest) {
         Client client=
                 repository.findClientByClientId(id);
                      if(client!=null) {
@@ -99,7 +98,7 @@ public class ClientService {
 
                          repository.save(client);
                      }else {System.out.println("The Client with the given Id not exist in the database");}
-        return ResponseEntity.ok("Client has been updated successfully");
+        return RegisterAgentResponse.builder().message("Agent updated successfully").build();
     }
 
 
@@ -112,14 +111,14 @@ public class ClientService {
         return  client;
     }
 
-    public Boolean deleteClient(Long id) {
+    public RegisterAgentResponse deleteClient(Long id) {
         Client client = repository.findClientByClientId(id);
         if(client !=null){
             repository.delete(client);
-            return true;
+            return   RegisterAgentResponse.builder().message("Deleted with Success").build();
         }else {
-            System.out.println("No client with a id given exist in the database ");
-            return false;
+
+              return RegisterAgentResponse.builder().message("Error during Deleting").build();
         }
     }
 }

@@ -6,6 +6,8 @@ import com.eBankingApp.jabak_lah_backend.config.JwtService;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 
 import com.eBankingApp.jabak_lah_backend.entity.Role;
+import com.eBankingApp.jabak_lah_backend.images.FileDB;
+import com.eBankingApp.jabak_lah_backend.images.FileDBRepository;
 import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
 import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
@@ -23,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +41,7 @@ public class AdminService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final FileDBRepository fileDBRepository;
     private final String BRAND_NAME = "NXSMS";
     @Autowired
     private VonageClient vonageClient;
@@ -81,6 +86,26 @@ public class AdminService {
                 .password(passwordEncoder.encode(generatedPassword))
                 .role(Role.AGENT)
                 .build();
+
+//        MultipartFile photoFile = request.getPhoto();
+//        FileDB photo = null;
+//
+//        if (photoFile != null) {
+//            try {
+//                String photoFileName = StringUtils.cleanPath(photoFile.getOriginalFilename());
+//                byte[] photoData = photoFile.getBytes();
+//                String photoFileType = photoFile.getContentType();
+//                photo = new FileDB(photoFileName, photoFileType, photoData);
+//                photo = fileDBRepository.save(photo);
+//            } catch (IOException e) {
+//                // Handle the exception
+//            }
+//        }
+//
+//        // Assign the photo to the agent
+//        Agent.setPhoto(photo);
+
+
         var savedAgent = repository.save(Agent);
         var jwtToken = jwtService.generateToken(Agent);
       //  var refreshToken = jwtService.generateRefreshToken(Agent);

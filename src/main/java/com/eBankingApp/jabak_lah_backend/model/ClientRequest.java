@@ -14,6 +14,7 @@ public class ClientRequest {
     private String address;
     private String CIN;
     private String phoneNumber;
+
     private Role role;
 
 }

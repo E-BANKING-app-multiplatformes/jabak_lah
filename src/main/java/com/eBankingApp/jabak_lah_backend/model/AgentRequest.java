@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class AgentRequest {
     private Integer id;
 
-
+//    private MultipartFile photo;
     private String firstName;
     private String lastName ;
     private String address ;
@@ -20,5 +21,6 @@ public class AgentRequest {
     private String phoneNumber ;
     private String CommercialRn ;
     private String patentNumber ;
+    private String password ;
 
 }
