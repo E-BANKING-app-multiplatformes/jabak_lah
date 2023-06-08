@@ -61,6 +61,8 @@ public class JwtService {
     Client user = (Client) userDetails; // Cast UserDetails to User
     extraClaims.put("role", user.getRole());
     extraClaims.put("id" ,user.getId());
+   extraClaims.put("isFirstLogin" ,user.getIsFirstLogin());
+
 
     return Jwts
             .builder()

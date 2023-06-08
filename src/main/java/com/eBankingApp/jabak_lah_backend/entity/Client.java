@@ -30,10 +30,12 @@ public class Client  implements UserDetails {
     private String email;
     private String address;
     private String CIN;
+    private String newPassword;
     private String phoneNumber;
     @JsonIgnore
     private String password;
     private Date createdDate;
+    private Boolean isFirstLogin ;
 
     private String CommercialRn ;
     private String patentNumber ;
@@ -91,6 +93,7 @@ public class Client  implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
 
 }

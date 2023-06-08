@@ -22,7 +22,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService {
+public class AgentService {
 
     private final ClientRepository repository;
     private final TokenRepository tokenRepository;
@@ -47,8 +47,8 @@ public class ClientService {
 
     public RegisterAgentResponse registerClient(ClientRequest request) {
 
-        if (repository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+        if (repository.existsByPhoneNumber(request.getPhoneNumber()) && repository.existsByEmail(request.getEmail() ) ) {
+            throw new RuntimeException("Email Or Phone already exists");
         }
         String generatedpassword = generatePassword();
         var Clinet = Client.builder()
@@ -59,6 +59,7 @@ public class ClientService {
                 .phoneNumber(request.getPhoneNumber())
                 .password(passwordEncoder.encode(generatedpassword))
                 .CIN(request.getCIN())
+                .isFirstLogin(true)
                 .role(Role.CLIENT)
                 .build();
         var savedAgent = repository.save(Clinet);
@@ -67,7 +68,7 @@ public class ClientService {
         TextMessage message = new TextMessage(BRAND_NAME, request.getPhoneNumber(), "Your password is : " + generatedpassword);
         SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
         saveUserToken(savedAgent, jwtToken);
-        return RegisterAgentResponse.builder().message("success"+generatedpassword).build();
+        return RegisterAgentResponse.builder().message("success " + generatedpassword).build();
     }
 
 

@@ -1,6 +1,6 @@
 server:
   port: 8084
-
+  address: 192.168.0.104
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/jwt_security?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false

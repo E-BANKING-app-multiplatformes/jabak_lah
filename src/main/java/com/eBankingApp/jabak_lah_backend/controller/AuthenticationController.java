@@ -67,7 +67,7 @@ public class AuthenticationController {
 //
 //  private static final long RESET_PASSWORD_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hours
 //  @PostMapping("/forgot-password")
-//  public ResponseEntity<?> forgotPassword(@RequestParam("phoneNumber") String phoneNumber) {
+//  public ResponseEntity<?> forgotPassword(@RequestParam("phoneNumber") String phoneNumber , @RequestParam("newPassword") String newPassword) {
 //    Client user = repository.findByPhoneNumber(phoneNumber);
 //    if (user == null) {
 //      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
@@ -81,22 +81,25 @@ public class AuthenticationController {
 //    user.setVerificationCode(verificationCode);
 //    user.setVerificationCodeCreatedAt(String.valueOf(new Date()));
 //    repository.save(user);
+//
 //    return ResponseEntity.ok("Verification code sent successfully");
 //
 //  }
-//
+////  @RequestParam("token") String token,
 //  @PostMapping("/reset-password")
-//  public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
+//  public ResponseEntity<?> resetPassword( @RequestParam("newPassword") String newPassword) {
 //    // Validate the token and extract the user ID
-//    String userId = validateResetPasswordToken(token);
-//    if (userId == null) {
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
-//    }//
-//    // Find the user by ID
-//    Client user = repository.findById(userId);
-//    if (user == null) {
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-//    }
+////    String verificationCode = validateResetPasswordToken(token);
+//    Client user
+//            = repository.
+////    if (userId == null) {
+////      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
+////    }//
+////    // Find the user by ID
+////    Client user = repository.findById(userId);
+////    if (user == null) {
+////      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+////    }
 //
 //    // Update the user's password and clear the verification code
 //    user.setPassword(newPassword);
@@ -106,25 +109,25 @@ public class AuthenticationController {
 //
 //    return ResponseEntity.ok("Password reset successfully");
 //  }
-//  private String generateResetPasswordToken(String userId) {
-//    // Generate a JWT token containing the user ID
-//    return Jwts.builder()
-//            .setSubject(userId)
-//            .setIssuedAt(new Date())
-//            .setExpiration(new Date(System.currentTimeMillis() + RESET_PASSWORD_TOKEN_EXPIRATION_TIME))
-//            .signWith(SignatureAlgorithm.HS512, secretKey)
-//            .compact();
-//  }
-//
-//  private String validateResetPasswordToken(String token) {
-//    try {
-//      // Validate the JWT token and extract the user ID from it
-//      return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      return null;
-//    }
-//  }
+////  private String generateResetPasswordToken(String userId) {
+////    // Generate a JWT token containing the user ID
+////    return Jwts.builder()
+////            .setSubject(userId)
+////            .setIssuedAt(new Date())
+////            .setExpiration(new Date(System.currentTimeMillis() + RESET_PASSWORD_TOKEN_EXPIRATION_TIME))
+////            .signWith(SignatureAlgorithm.HS512, secretKey)
+////            .compact();
+////  }
+////
+////  private String validateResetPasswordToken(String token) {
+////    try {
+////      // Validate the JWT token and extract the user ID from it
+////      return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+////    } catch (Exception e) {
+////      e.printStackTrace();
+////      return null;
+////    }
+////  }
 //
 //  private String generateVerificationCode() {
 //    // Generate a random verification code (e.g., using a random number generator)

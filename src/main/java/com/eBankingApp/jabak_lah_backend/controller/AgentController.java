@@ -3,7 +3,8 @@ package com.eBankingApp.jabak_lah_backend.controller;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 import com.eBankingApp.jabak_lah_backend.model.ClientRequest;
 import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
-import com.eBankingApp.jabak_lah_backend.services.ClientService;
+import com.eBankingApp.jabak_lah_backend.services.AgentService;
+
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,11 +18,10 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/client")
-
 @RequiredArgsConstructor
 public class AgentController {
 
-private  final ClientService service;
+private  final AgentService service;
     @Operation(
             description = "Get endpoint for Agent",
             summary = "This is a summary for management get endpoint",

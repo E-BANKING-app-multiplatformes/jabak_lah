@@ -70,8 +70,8 @@ public class AdminService {
         tokenRepository.save(token);
     }
     public RegisterAgentResponse registerAgent(AgentRequest request) {
-        if (repository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+        if (repository.existsByPhoneNumber(request.getPhoneNumber()) && repository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Phone num already exists Or Email");
 
         }
         String generatedPassword =generatePassword();
