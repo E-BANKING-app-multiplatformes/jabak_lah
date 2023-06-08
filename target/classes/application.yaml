@@ -1,6 +1,6 @@
 server:
   port: 8084
-  #address: 192.168.0.108
+  address: 192.168.1.102
 
 spring:
   datasource:
@@ -35,8 +35,8 @@ application:
 
 
 vonage:
-  apiKey: afab8c03
-  apiSecret: zQjyg80DAbcb2SfV
+  apiKey: 6077009c
+  apiSecret: FiTPMyZGriGuCYN5
 
 
 
