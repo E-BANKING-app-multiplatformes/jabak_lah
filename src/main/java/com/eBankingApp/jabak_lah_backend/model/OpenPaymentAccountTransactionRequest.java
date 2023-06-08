@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OpenPaymentAccountTransactionRequest {
 
-    private double balance  ;
+    private double paymentLimit  ;
 
 }
