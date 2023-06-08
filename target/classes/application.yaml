@@ -1,6 +1,6 @@
 server:
   port: 8084
-  address: 100.94.242.29
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/jabak_lah
@@ -18,8 +18,6 @@ spring:
     database: mysql
 
     database-platform: org.hibernate.dialect.MySQLDialect
-
-
 application:
   security:
     jwt:
