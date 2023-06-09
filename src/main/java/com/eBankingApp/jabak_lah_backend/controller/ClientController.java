@@ -31,7 +31,7 @@ public class ClientController {
         return  new ResponseEntity<>(clientServiceV2.getAccount(id), HttpStatus.OK);
     }
     @PreAuthorize("hasAuthority('client:update')")
-    @PutMapping("/changePassword")
+    @PostMapping("/changePassword")
     public ResponseEntity<RegisterAgentResponse> changePassword(@RequestBody ClientRequest request) {
         RegisterAgentResponse client = clientServiceV2.changePassword(request);
         return ResponseEntity.ok(client);

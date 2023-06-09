@@ -1,6 +1,6 @@
 package com.eBankingApp.jabak_lah_backend.entity;
 
-import com.eBankingApp.jabak_lah_backend.images.FileDB;
+
 import com.eBankingApp.jabak_lah_backend.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -32,6 +32,7 @@ public class Client  implements UserDetails {
     private String email;
     private String address;
     private String CIN;
+    private Date birthDate ;
     private String newPassword;
     private String phoneNumber;
     @JsonIgnore
@@ -50,14 +51,13 @@ public class Client  implements UserDetails {
     private String verificationCode;
    private String VerificationCodeCreatedAt;
 
-//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "photo_id", referencedColumnName = "id")
-//    private FileDB photo;
+
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paymentAccountId", referencedColumnName = "paymentAccountId")
     private PaymentAccount paymentAccount;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<BankAccount> bankAccounts = new ArrayList<>();
 
@@ -67,6 +67,11 @@ public class Client  implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+    @JsonIgnore
+    public List<BankAccount> getBankAccounts() {
+        return bankAccounts;
+    }
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Token> tokens;

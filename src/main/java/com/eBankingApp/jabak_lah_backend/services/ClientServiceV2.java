@@ -12,5 +12,5 @@ public interface ClientServiceV2 {
     ClientProfileResponse getAccount(long id);
 
 
-    RegisterAgentResponse changePassword(ClientRequest request);
+    RegisterAgentResponse changePassword(  ClientRequest request);
 }

@@ -51,6 +51,7 @@ public class AgentService {
         if (repository.existsByPhoneNumber(request.getPhoneNumber()) && repository.existsByEmail(request.getEmail() ) ) {
             throw new RuntimeException("Email Or Phone already exists");
         }
+
         String generatedpassword = generatePassword();
         var Clinet = Client.builder()
                 .firstName(request.getFirstName())
@@ -63,8 +64,9 @@ public class AgentService {
                 .isFirstLogin(true)
                 .role(Role.CLIENT)
                 .isPaymentAccountActivated(false)
-                .isFirstLogin(true)
                 .createdDate(LocalDate.now())
+                .isPaymentAccountActivated(false)
+                .birthDate(request.getBirthDate())
                 .build();
         var savedAgent = repository.save(Clinet);
         var jwtToken = jwtService.generateToken(Clinet);

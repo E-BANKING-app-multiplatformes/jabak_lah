@@ -6,8 +6,7 @@ import com.eBankingApp.jabak_lah_backend.config.JwtService;
 import com.eBankingApp.jabak_lah_backend.entity.Client;
 
 import com.eBankingApp.jabak_lah_backend.entity.Role;
-import com.eBankingApp.jabak_lah_backend.images.FileDB;
-import com.eBankingApp.jabak_lah_backend.images.FileDBRepository;
+
 import com.eBankingApp.jabak_lah_backend.model.AgentRequest;
 import com.eBankingApp.jabak_lah_backend.model.RegisterAgentResponse;
 import com.eBankingApp.jabak_lah_backend.repository.ClientRepository;
@@ -41,7 +40,7 @@ public class AdminService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final FileDBRepository fileDBRepository;
+
     private final String BRAND_NAME = "NXSMS";
     @Autowired
     private VonageClient vonageClient;
@@ -87,28 +86,12 @@ public class AdminService {
                 .role(Role.AGENT)
                 .build();
 
-//        MultipartFile photoFile = request.getPhoto();
-//        FileDB photo = null;
-//
-//        if (photoFile != null) {
-//            try {
-//                String photoFileName = StringUtils.cleanPath(photoFile.getOriginalFilename());
-//                byte[] photoData = photoFile.getBytes();
-//                String photoFileType = photoFile.getContentType();
-//                photo = new FileDB(photoFileName, photoFileType, photoData);
-//                photo = fileDBRepository.save(photo);
-//            } catch (IOException e) {
-//                // Handle the exception
-//            }
-//        }
-//
-//        // Assign the photo to the agent
-//        Agent.setPhoto(photo);
+
 
 
         var savedAgent = repository.save(Agent);
         var jwtToken = jwtService.generateToken(Agent);
-      //  var refreshToken = jwtService.generateRefreshToken(Agent);
+
         saveUserToken(savedAgent, jwtToken);
         TextMessage message = new TextMessage(BRAND_NAME, request.getPhoneNumber(), "Your password is : " + generatedPassword);
         SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);

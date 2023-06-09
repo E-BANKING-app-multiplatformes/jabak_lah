@@ -1,5 +1,6 @@
 package com.eBankingApp.jabak_lah_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class BankAccount {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
+    @JsonIgnore
     private Client client;
 
     public void setId(Long id) {

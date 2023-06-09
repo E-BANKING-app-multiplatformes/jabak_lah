@@ -11,7 +11,8 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client,Long>{
 
     boolean existsByEmail(String email);
-    boolean existsByPhoneNumber(String email);
+//    @Query(value = "SELECT * FROM client WHERE phone_number = ?1 AND role = 'CLIENT'", nativeQuery = true)
+    boolean existsByPhoneNumber(String phoneNumber);
 
     Optional<Object> findByEmail(String email);
 

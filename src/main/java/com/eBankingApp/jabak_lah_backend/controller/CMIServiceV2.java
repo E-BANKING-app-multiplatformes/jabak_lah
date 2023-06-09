@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 @RestController
-@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
+@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "*") // Allow requests from Angular app's origin
 @PreAuthorize("hasAuthority('AGENT')")
 @RequestMapping("/fim/est3DgateV2")
 public class CMIServiceV2 {
@@ -57,7 +58,6 @@ public class CMIServiceV2 {
                     .accountBalance(request.getPaymentLimit())
                     .bankName("CIH")
                     .createdDate(currentDate)
-
                     .build();
             paymentAccountRepository.save(paymentAccount);
             long paymentAccountId =paymentAccount.getPaymentAccountId();

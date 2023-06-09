@@ -34,17 +34,13 @@ public class ClientServiceV2Impl implements  ClientServiceV2{
                 .phoneNumber(client.getPhoneNumber()).email(client.getEmail()).address(client.getAddress()).build();  }
 
     public RegisterAgentResponse changePassword(ClientRequest request) {
-      //  String phoneNumber = request.getPhoneNumber();
-        String newPassword = request.getNewPassword();
 
         Client client = clientRepository.findByPhoneNumber(request.getPhoneNumber());
-
         if (!(client == null) ) {
-
              client.setPassword(passwordEncoder.encode(request.getNewPassword()));
             client.setIsFirstLogin(false);
-                clientRepository.save(client);
-                return RegisterAgentResponse.builder().message("Password updated successfully").build();
+            clientRepository.save(client);
+            return RegisterAgentResponse.builder().message("Password updated successfully").build();
             } else {
             return RegisterAgentResponse.builder().message("Client not found").build();
             }
